@@ -4,12 +4,16 @@ import ProductCard from './components/ProductCard'
 import Admin from './pages/Admin'
 
 function Home() {
-  const [products, setProducts] = useState([])
+  // ← Aquí está el fix: le decimos a TS el tipo correcto
+  const [products, setProducts] = useState<any[]>([])
 
   useEffect(() => {
     fetch('https://carpinteria-backend.vercel.app/api/productos')
       .then(res => res.json())
-      .then(data => setProducts(data))
+      .then(data => {
+        const array = Array.isArray(data) ? data : [data]
+        setProducts(array)
+      })
       .catch(() => setProducts([]))
   }, [])
 
@@ -21,9 +25,11 @@ function Home() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 max-w-7xl mx-auto">
           {products.length === 0 ? (
-            <p className="col-span-full text-center text-2xl text-amber-900">Cargando productos...</p>
+            <p className="col-span-full text-center text-3xl text-amber-900">
+              Cargando productos...
+            </p>
           ) : (
-            products.map((p: any) => (
+            products.map((p) => (
               <ProductCard
                 key={p.id}
                 product={{

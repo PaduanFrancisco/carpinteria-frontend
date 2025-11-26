@@ -1,15 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
 import ProductCard from './components/ProductCard'
 import Admin from './pages/Admin'
 
 function Home() {
-  const [products] = useState([
-    { nombre: "Mesa Familiar", precio: 680000, tipomadera: "Roble", medidas: "200x90 cm" },
-    { nombre: "Silla Érica", precio: 125000, tipomadera: "Pino", medidas: "45x90 cm" },
-    { nombre: "Rack TV", precio: 420000, tipomadera: "Paraíso", medidas: "150x40 cm" },
-    { nombre: "Biblioteca Alta", precio: 890000, tipomadera: "Roble", medidas: "100x200 cm" },
-  ])
+  const [products, setProducts] = useState([])
+
+  useEffect(() => {
+    fetch('https://carpinteria-backend.vercel.app/api/productos')
+      .then(res => res.json())
+      .then(data => setProducts(data))
+      .catch(err => {
+        console.error('Error cargando productos:', err)
+        // opcional: podés dejar los falsos como fallback si querés
+      })
+  }, [])
 
   return (
     <main className="pt-24 min-h-screen bg-gradient-to-b from-amber-50 to-orange-100">
@@ -18,8 +23,16 @@ function Home() {
           NUESTROS PRODUCTOS
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 max-w-7xl mx-auto">
-          {products.map((p, i) => (
-            <ProductCard key={i} product={p} />
+          {products.map((product: any) => (
+            <ProductCard 
+              key={product.id} 
+              product={{
+                nombre: product.nombre,
+                precio: Number(product.precio),
+                tipomadera: product.tipomadera,
+                medidas: product.medidas
+              }} 
+            />
           ))}
         </div>
       </section>

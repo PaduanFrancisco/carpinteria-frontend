@@ -8,14 +8,15 @@ function Home() {
   const [products, setProducts] = useState<any[]>([])
 
   useEffect(() => {
-    fetch('https://carpinteria-backend.vercel.app/api/productos')
-      .then(res => res.json())
-      .then(data => {
-        const array = Array.isArray(data) ? data : [data]
-        setProducts(array)
-      })
-      .catch(() => setProducts([]))
-  }, [])
+  fetch('https://carpinteria-backend.vercel.app/api/productos')
+    .then(res => res.json())
+    .then(data => {
+      console.log('Datos recibidos:', data);
+      const productosArray = Array.isArray(data) ? data : data ? [data] : [];
+      setProducts(productosArray);
+    })
+    .catch(() => setProducts([]));
+}, []);
 
   return (
     <main className="pt-24 min-h-screen bg-gradient-to-b from-amber-50 to-orange-100">
